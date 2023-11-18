@@ -16,16 +16,22 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "msg-test";
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
+
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) { //user logged-in
             if (currentUser.isEmailVerified()) {
                 Log.d(TAG, "Firebase uid: " + currentUser.getUid());
+                Intent intent = new Intent(MainActivity.this, ClienteActivity.class);
+                startActivity(intent);
             }
         }
         Intent intent = AuthUI.getInstance()
@@ -36,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         signInLauncher.launch(intent);
+
 
     }
     ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
@@ -49,5 +56,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
     );
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            //reload();
+        }
+    }
 }
